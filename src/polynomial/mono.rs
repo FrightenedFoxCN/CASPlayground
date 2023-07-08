@@ -3,23 +3,29 @@ use std::vec::Vec;
 // struct of a mononomial
 pub struct Mononomial {
     // degrees of variables
-    deg: Vec<u64>,
+    // <TODO> Implement GET-SET
+    pub deg: Vec<u64>,
     // coefficient
-    coeff: f64,
+    pub coeff: f64,
 }
 
 impl Mononomial {
+    // get number of variables
+    pub fn get_num_variables(&self) -> u64 {
+        self.deg.len().try_into().unwrap()
+    }
+
     // evaluate the mononomial with the input variables
-    pub fn eval(&self, variables: Vec<f64>) -> Option<f64> {
+    pub fn eval(&self, variables: &Vec<f64>) -> Option<f64> {
         if variables.len() != self.deg.len() {
             println!("The number of the parameters does not match!");
             None
         } else {
-            let mut sum = self.coeff;
+            let mut res = self.coeff;
             for i in 0..variables.len() {
-                sum *= variables[i].powi(self.deg[i].try_into().unwrap());
+                res *= variables[i].powi(self.deg[i].try_into().unwrap());
             }
-            Some(sum)
+            Some(res)
         }
     }
 
@@ -36,6 +42,15 @@ impl Mononomial {
             true
         }
     }
+
+    // if some variable (given as an index) is inside the polynomial
+    pub fn has_variable(&self, index: u64) -> bool {
+        if self.deg[index as usize] != 0 {
+            true
+        } else {
+            false
+        }
+    }
 }
 
 #[cfg(test)]
@@ -49,14 +64,14 @@ mod tests {
             deg: Vec::from([1, 3, 2]),
             coeff: -0.5,
         };
-        let res1 = mono1.eval(Vec::from([0.3, 0.4, 0.5])).unwrap();
+        let res1 = mono1.eval(&Vec::from([0.3, 0.4, 0.5])).unwrap();
         assert!(_is_inside_epsilon_about(-0.0024, res1, 0.001));
 
         let mono2 = Mononomial {
             deg: Vec::from([1, 3, 2, 4]),
             coeff: -0.5,
         };
-        let res2 = mono2.eval(Vec::from([0.3, 0.4, 0.5]));
+        let res2 = mono2.eval(&Vec::from([0.3, 0.4, 0.5]));
         assert_eq!(res2, None);
     }
 
